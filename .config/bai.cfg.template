@@ -1,0 +1,12 @@
+key=${VSEGPT_API_KEY}
+hi_contrast=false
+expose_current_dir=true
+max_history=10
+api=${VSEGPT_API}
+model=deepseek/deepseek-chat
+json_mode=false
+temp=0.1
+tokens=500
+exec_query=
+question_query=
+error_query=

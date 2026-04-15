@@ -1,0 +1,12 @@
+{
+  "mattermostUrl": "${MATTERMOST_URL}",
+  "token": "${MATTERMOST_ACCESS_TOKEN}",
+  "teamId": "${MATTERMOST_TEAM_ID}",
+  "monitoring": {
+    "enabled": false,
+    "schedule": "*/15 * * * *",
+    "channels": ["town-square", "off-topic"],
+    "topics": ["tv series", "champions league"],
+    "messageLimit": 50
+  }
+}

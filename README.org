@@ -1,0 +1,37 @@
+#+TITLE: Opencode Workspace
+#+AUTHOR: v.fedorov
+#+DESCRIPTION: Интегрированная среда разработки с поддержкой ИИ-агентов и MCP-инструментов
+
+* Обзор проекта
+Данный репозиторий представляет собой рабочее пространство, развернутое в DevContainer. Оно объединяет инструменты разработки, документацию и набор серверов [[https://modelcontextprotocol.io/][Model Context Protocol (MCP)]] для интеграции с внешними сервисами (Jira, GitLab, Graylog, Mattermost).
+
+* Быстрый старт
+Проект предназначен для запуска в Docker через DevContainer.
+
+** Сборка и запуск
+1. Скопируйте шаблон окружения:
+   #+BEGIN_SRC bash
+   cp .devcontainer/.env-dist .devcontainer/.env
+   #+END_SRC
+2. Заполните необходимые секреты в =.devcontainer/.env=.
+3. Выполните сборку и запуск:
+   #+BEGIN_SRC bash
+   .devcontainer/build
+   .devcontainer/up
+   #+END_SRC
+
+** Использование MCP инструментов
+В проекте настроены следующие MCP-подключения (см. =.opencode/opencode.json=):
+- *Atlassian* (Jira/Confluence)
+- *GitLab* (инспекция репозиториев)
+- *Graylog* (анализ логов)
+- *Mattermost* (уведомления и мониторинг)
+- *Pandoc* (конвертация документов)
+- *Docling* (парсинг документов через удаленный сервер)
+
+* Инструкции для ИИ-агентов
+Все инструкции по стилю кода, безопасности и рабочим процессам находятся в файле [[file:AGENTS.md][AGENTS.md]].
+
+* Заметки и задачи
+Новые задачи помещаются в =~/org/inbox.org=. 
+Для управления задачами используйте стандартные TODO-циклы Org-mode.

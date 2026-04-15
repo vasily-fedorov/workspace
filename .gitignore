@@ -1,0 +1,22 @@
+/.devcontainer/.env
+
+# Секреты и локальные настройки
+.env
+.env.*
+! .env-dist
+*.local.json
+config.local.json
+
+# Временные файлы и данные приложений
+*.log
+.DS_Store
+Thumbs.db
+
+# Директории зависимостей и кеша
+node_modules/
+venv/
+.cache/
+__pycache__/
+.openclaw/cache/
+.openclaw/state/
+

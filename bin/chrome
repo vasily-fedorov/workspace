@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+google-chrome --remote-debugging-port=9222 --remote-allow-origins=* --user-data-dir=/workspace/user -o-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer

@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+.devcontainer/up && \
+export $(cat .devcontainer/.env) && \
+docker exec -it $COMPOSE_PROJECT_NAME bash

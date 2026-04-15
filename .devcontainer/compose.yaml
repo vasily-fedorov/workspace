@@ -1,0 +1,103 @@
+# Docling Serve - Document processing with MCP support (configured in opencode.json)
+# OpenClaw - AI Agent with MCP support (configured in opencode.json)
+name: $COMPOSE_PROJECT_NAME
+services:
+  devcontainer:
+    container_name: $COMPOSE_PROJECT_NAME
+    # Extra resources for running Google Chrome smoothly inside the container.
+    # (values can be tuned via .env if needed)
+    shm_size: 2gb
+    mem_limit: 8g
+    cpus: 4.0
+    env_file: .env
+    environment:
+      - DISPLAY=${DISPLAY}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+      - PULSE_SERVER=tcp:host.docker.internal:4713
+    volumes:
+      - ../:/workspace
+      - ${DOWNLOADS_PATH}:/home/$COMPOSE_PROJECT_NAME/downloads
+      - ${WORK_PATH}:/home/$COMPOSE_PROJECT_NAME/work
+      - ${ORG_PATH}:/home/$COMPOSE_PROJECT_NAME/org/work
+      - ${INBOX_ORG_PATH}:/home/$COMPOSE_PROJECT_NAME/org/inbox.org
+      - ./bash_history:/home/$COMPOSE_PROJECT_NAME/.bash_history
+      - openclaw_cache:/home/$COMPOSE_PROJECT_NAME/.openclaw/cache
+      - openclaw_state:/home/$COMPOSE_PROJECT_NAME/.openclaw/state
+      - user_cache:/home/$COMPOSE_PROJECT_NAME/.cache
+      - apt_cache:/var/cache/apt/archives
+      - apt_lists:/var/lib/apt/lists
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+      - ${HOME}/.config/pulse:/root/.config/pulse:ro
+      - /var/run/dbus:/run/dbus
+    build:
+      context: ../
+      dockerfile: ./.devcontainer/Dockerfile
+      args:
+        USER_ID: $UID
+        USERNAME: $COMPOSE_PROJECT_NAME
+        IMAGE: $IMAGE
+        PORT: $PORT
+        VSEGPT_API_KEY: $VSEGPT_API_KEY
+        VSEGPT_API: $VSEGPT_API
+        OPENCLAW_TOKEN: $OPENCLAW_TOKEN
+        MATTERMOST_URL: $MATTERMOST_URL
+        MATTERMOST_ACCESS_TOKEN: $MATTERMOST_ACCESS_TOKEN
+        MATTERMOST_TEAM_ID: $MATTERMOST_TEAM_ID
+    stdin_open: true
+    tty: true
+    ports:
+      - $PORT:$PORT # OpenCode
+      - 18789:18789
+
+  docling-serve:
+    image: ghcr.io/docling-project/docling-serve-cpu:latest
+    container_name: docling-serve
+    restart: always
+    command: >
+      /bin/bash -c '
+        sed -i "s/enable_dns_rebinding_protection=True/enable_dns_rebinding_protection=False/g" /opt/app-root/lib*/python*/site-packages/mcp/server/fastmcp/server.py 2>/dev/null || true;
+        exec docling-mcp-server --transport streamable-http --port 5002 --host 0.0.0.0
+      '
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+    volumes:
+      - ../:/workspace
+      - ${DOWNLOADS_PATH}:/home/$COMPOSE_PROJECT_NAME/downloads
+      - ${WORK_PATH}:/home/$COMPOSE_PROJECT_NAME/work
+    ports:
+      - "5002:5002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/mcp"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+#   openclaw:
+#     image: ghcr.io/openclaw/openclaw:latest
+#     container_name: openclaw
+#     restart: always
+#     volumes:
+#       - ../:/workspace
+#     environment:
+#       - OPENCLAW_TOKEN=${OPENCLAW_TOKEN}
+#       - VSEGPT_API_KEY=${VSEGPT_API_KEY}
+# #      - OPENCLAW_CONFIG=/workspace/config.json
+#     # ports:
+#     #   - "18789:18789"
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:18789/health"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#       start_period: 60s
+
+
+      
+volumes:
+  user_cache:
+  apt_cache:
+  apt_lists:
+  openclaw_cache:
+  openclaw_state:
