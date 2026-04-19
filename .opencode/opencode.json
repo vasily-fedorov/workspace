@@ -62,6 +62,7 @@
     "n8n-mcp": {
       "type": "local",
       "command": ["npx", "-y", "n8n-mcp"],
+      "timeout": 300000,
       "environment": {
         "N8N_API_URL": "{env:N8N_API_URL}",
         "N8N_API_KEY": "{env:N8N_API_KEY}"

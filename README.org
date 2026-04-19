@@ -27,6 +27,11 @@ make
 opencode web --port=9631 --hostname=0.0.0.0
 #+end_src
 
+** Как использовать
+1. Для доступа к Opencode открыть в браузере http://localhost:9631
+2. Для доступа к bash: =.devcontainer/exec bash=
+3. В bash внутри devcontainer работает ИИ: =bai <command>=
+   
 ** Использование MCP инструментов
 В проекте настроены следующие MCP-подключения (см. =.opencode/opencode.json=):
 - *Atlassian* (Jira/Confluence)
@@ -44,3 +49,4 @@ opencode web --port=9631 --hostname=0.0.0.0
 * Заметки и задачи
 Новые задачи помещаются в =~/org/inbox.org=. 
 Для управления задачами используйте стандартные TODO-циклы Org-mode.
+
