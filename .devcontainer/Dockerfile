@@ -59,14 +59,6 @@ RUN if [ "$USER_ID" = "1000" ]; then \
 
 RUN echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/$USERNAME
 
-# features begin: run install.sh for every feature
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    --mount=type=cache,target=/root/.cache,sharing=locked \
-    --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
-    if [ -f /workspace/.devcontainer/dood/install.sh ]; then bash /workspace/.devcontainer/dood/install.sh; fi
-# features end
-
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     --mount=type=cache,target=/root/.cache,sharing=locked \
@@ -102,7 +94,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
  curl -s https://api.github.com/repos/be5invis/Iosevka/releases/latest | grep browser_download_url | grep -i ttc | head -1 | cut -d'"' -f4 | xargs wget -O iosevka.zip && sudo unzip iosevka.zip -d /usr/share/fonts/ && fc-cache -fv
 
-RUN git clone https://github.com/mothlike/mcp_graylog.git
+RUN git clone https://github.com/mothlike/mcp_graylog.git /home/$USERNAME/.mcp_graylog
 
 # Mattermost MCP Server
 RUN git clone https://github.com/vasily-fedorov/mattermost-mcp.git /home/$USERNAME/.mattermost-mcp && \
@@ -177,6 +169,17 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 COPY --chown=$USER_ID .devcontainer /workspace/.devcontainer
 
+USER root
+# features begin: run install.sh for every feature
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/root/.cache,sharing=locked \
+    --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
+    if [ -f /workspace/.devcontainer/dood/install.sh ]; then bash /workspace/.devcontainer/dood/install.sh; fi
+# features end
+USER $USERNAME  
+
+
 # Copy .config templates and process them with env vars from build args
 COPY --chown=$USER_ID .config/*.template /tmp/templates/
 RUN mkdir -p /home/$USERNAME/.config /home/$USERNAME/.openclaw /home/$USERNAME/.mattermost-mcp && \
@@ -184,7 +187,7 @@ RUN mkdir -p /home/$USERNAME/.config /home/$USERNAME/.openclaw /home/$USERNAME/.
     envsubst < /tmp/templates/openclaw.json.template > /home/$USERNAME/.openclaw/openclaw.json && \
     envsubst < /tmp/templates/mattermost-mcp.json.template > /home/$USERNAME/.mattermost-mcp/config.local.json && \
     rm -rf /tmp/templates
-
+RUN npm config delete prefix && npm config delete globalconfig
 WORKDIR /workspace
 
 

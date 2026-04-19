@@ -14,11 +14,18 @@
    cp .devcontainer/.env-dist .devcontainer/.env
    #+END_SRC
 2. Заполните необходимые секреты в =.devcontainer/.env=.
-3. Выполните сборку и запуск:
+3. Добавьте bash_history:
+   #+begin_src bash
+make
+   #+end_src
+4. Выполните сборку и запуск:
    #+BEGIN_SRC bash
-   .devcontainer/build
-   .devcontainer/up
+   .devcontainer/activate
    #+END_SRC
+5. Внутри контейнера:
+   #+begin_src bash
+opencode web --port=9631 --hostname=0.0.0.0
+#+end_src
 
 ** Использование MCP инструментов
 В проекте настроены следующие MCP-подключения (см. =.opencode/opencode.json=):
@@ -28,7 +35,9 @@
 - *Mattermost* (уведомления и мониторинг)
 - *Pandoc* (конвертация документов)
 - *Docling* (парсинг документов через удаленный сервер)
-
+  
+И т.д.
+  
 * Инструкции для ИИ-агентов
 Все инструкции по стилю кода, безопасности и рабочим процессам находятся в файле [[file:AGENTS.md][AGENTS.md]].
 

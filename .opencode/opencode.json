@@ -28,11 +28,11 @@
     },
     "mattermost": {
       "type": "local",
-      "command": ["node", "/home/work/.mattermost-mcp/build/index.js"]
+      "command": ["node", "/home/{env:COMPOSE_PROJECT_NAME}/.mattermost-mcp/build/index.js"]
     },
     "mcp-graylog": {
       "type": "local",
-      "command": ["sh", "-c", "cd /workspace/mcp_graylog && ./start.sh"],
+      "command": ["sh", "-c", "cd /home/{env:COMPOSE_PROJECT_NAME}/.mcp_graylog && ./start.sh"],
       "environment": {
         "GRAYLOG_ENDPOINT": "{env:GRAYLOG_ENDPOINT}",
         "GRAYLOG_USERNAME": "{env:GRAYLOG_USERNAME}",
