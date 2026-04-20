@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt update && apt -y install --no-install-recommends --no-install-suggests \
     adduser sudo curl bash less ca-certificates ssh-client git unzip pandoc \
     pipx npm nodejs file poppler-utils wget jq emacs gettext-base gpg htop \
-    language-pack-ru locales \
+    language-pack-ru locales bash-completion \
     && sudo locale-gen ru_RU.UTF-8 && sudo update-locale LANG=ru_RU.UTF-8
 # RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -119,20 +119,12 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/root/.cache,sharing=locked \
     --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
  pipx run uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
-# && specify extension add confluence --from https://github.com/aaronrsun/spec-kit-confluence/archive/refs/tags/v.1.1.1.zip \
-# && specify extension add jira --from https://github.com/mbachorik/spec-kit-jira/archive/refs/tags/v3.0.0.zip
 
-
-# USER root
-# RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-#     --mount=type=cache,target=/root/.cache,sharing=locked \
-#     --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
-#   apt-get update && apt-get install -y software-properties-common curl gnupg \
-#   && add-apt-repository ppa:xtradeb/apps -y && apt-get update \
-#   && apt-get install -y chromium \
-#   && add-apt-repository ppa:mozillateam/ppa && sudo apt install firefox
-# USER $USERNAME  
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/root/.cache,sharing=locked \
+    --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
+ curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard
 
 # org-mcp: Install Emacs MCP server packages from MELPA
 RUN --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
@@ -161,12 +153,6 @@ RUN cat > /home/$USERNAME/.emacs << 'EOF'
 (load "~/.emacs.d/init-org-mcp.el")
 EOF
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    --mount=type=cache,target=/root/.cache,sharing=locked \
-    --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
- curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard
-
 COPY --chown=$USER_ID .devcontainer /workspace/.devcontainer
 
 USER root
@@ -186,6 +172,7 @@ RUN mkdir -p /home/$USERNAME/.config /home/$USERNAME/.openclaw /home/$USERNAME/.
     envsubst < /tmp/templates/bai.cfg.template > /home/$USERNAME/.config/bai.cfg && \
     envsubst < /tmp/templates/openclaw.json.template > /home/$USERNAME/.openclaw/openclaw.json && \
     envsubst < /tmp/templates/mattermost-mcp.json.template > /home/$USERNAME/.mattermost-mcp/config.local.json && \
+    cp /tmp/templates/opencode.json.template /home/$USERNAME/.opencode/opencode.json && \
     rm -rf /tmp/templates
 RUN npm config delete prefix && npm config delete globalconfig
 WORKDIR /workspace
