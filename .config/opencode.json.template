@@ -28,7 +28,13 @@
     },
     "mattermost": {
       "type": "local",
-      "command": ["node", "/home/{env:COMPOSE_PROJECT_NAME}/.mattermost-mcp/build/index.js"]
+      "command": ["node", "/home/{env:COMPOSE_PROJECT_NAME}/.mattermost-mcp/build/index.js"],
+      "environment": {
+        "MATTERMOST_URL": "{env:MATTERMOST_URL}",
+        "MATTERMOST_ACCESS_TOKEN": "{env:MATTERMOST_ACCESS_TOKEN}",
+        "MATTERMOST_TOKEN_ID": "{env:MATTERMOST_TOKEN_ID}",
+        "MATTERMOST_TEAM_ID": "{env:MATTERMOST_TEAM_ID}"
+      }
     },
     "mcp-graylog": {
       "type": "local",

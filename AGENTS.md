@@ -14,7 +14,7 @@
 1. Корень репозитория смонтирован по пути `/workspace` в DevContainer.
    - `/workspace/.devcontainer/compose.yaml` — описывает архитектуру проекта, запущенные сервисы, в том числе DevContainer.
    - `/workspace/.devcontainer/Dockerfile` — описывает сборку DevContainer.
-   - `/workspace/.opencode/opencode.json` — конфигурация OpenCode.
+   - `~/.opencode/opencode.json` — конфигурация OpenCode.
    - `/workspace/openclaw` — конфигурация OpenClaw.
    - `/workspace/.devcontainer/.env` — переменные окружения, секреты, параметры настройки.
    - `/workspace/.devcontainer/.env-dist` — шаблон переменных окружения.
@@ -38,7 +38,7 @@
 
 ### 2) Команды MCP (Разработка)
 
-Локальные/удаленные подключения MCP определены в `.opencode/opencode.json`.
+Локальные/удаленные подключения MCP определены в `~/.opencode/opencode.json`.
 
 Ключевые команды из `opencode.json`:
 

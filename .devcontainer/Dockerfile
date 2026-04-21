@@ -10,6 +10,7 @@ ARG OPENCLAW_TOKEN
 ARG MATTERMOST_URL
 ARG MATTERMOST_ACCESS_TOKEN
 ARG MATTERMOST_TEAM_ID
+ARG MATTERMOST_TOKEN_ID
 ENV USERNAME=${USERNAME}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV VSEGPT_API_KEY=${VSEGPT_API_KEY}
@@ -18,6 +19,7 @@ ENV OPENCLAW_TOKEN=${OPENCLAW_TOKEN}
 ENV MATTERMOST_URL=${MATTERMOST_URL}
 ENV MATTERMOST_ACCESS_TOKEN=${MATTERMOST_ACCESS_TOKEN}
 ENV MATTERMOST_TEAM_ID=${MATTERMOST_TEAM_ID}
+ENV MATTERMOST_TOKEN_ID=${MATTERMOST_TOKEN_ID}
 # for .bashrc
 ENV PROMPT_COMMAND='history -a'
 
@@ -167,13 +169,12 @@ USER $USERNAME
 
 
 # Copy .config templates and process them with env vars from build args
-COPY --chown=$USER_ID .config/*.template /tmp/templates/
+COPY --chown=$USER_ID .config/*.template /workspace/.config/
 RUN mkdir -p /home/$USERNAME/.config /home/$USERNAME/.openclaw /home/$USERNAME/.mattermost-mcp && \
-    envsubst < /tmp/templates/bai.cfg.template > /home/$USERNAME/.config/bai.cfg && \
-    envsubst < /tmp/templates/openclaw.json.template > /home/$USERNAME/.openclaw/openclaw.json && \
-    envsubst < /tmp/templates/mattermost-mcp.json.template > /home/$USERNAME/.mattermost-mcp/config.local.json && \
-    cp /tmp/templates/opencode.json.template /home/$USERNAME/.opencode/opencode.json && \
-    rm -rf /tmp/templates
+    envsubst < /workspace/.config/bai.cfg.template > /home/$USERNAME/.config/bai.cfg && \
+    envsubst < /workspace/.config/openclaw.json.template > /home/$USERNAME/.openclaw/openclaw.json && \
+    envsubst < /workspace/.config/mattermost-mcp.json.template > /home/$USERNAME/.mattermost-mcp/config.local.json && \
+    cp /workspace/.config/opencode.json.template /home/$USERNAME/.opencode/opencode.json
 RUN npm config delete prefix && npm config delete globalconfig
 WORKDIR /workspace
 
