@@ -1,9 +1,9 @@
 # Docling Serve - Document processing with MCP support (configured in opencode.json)
 # OpenClaw - AI Agent with MCP support (configured in opencode.json)
-name: $COMPOSE_PROJECT_NAME
+name: $DEV_CONTAINER_NAME
 services:
   devcontainer:
-    container_name: $COMPOSE_PROJECT_NAME
+    container_name: $DEV_CONTAINER_NAME
     # Extra resources for running Google Chrome smoothly inside the container.
     # (values can be tuned via .env if needed)
     shm_size: 2gb
@@ -16,14 +16,15 @@ services:
       - PULSE_SERVER=tcp:host.docker.internal:4713
     volumes:
       - ../:/workspace
-      - ${DOWNLOADS_PATH}:/home/$COMPOSE_PROJECT_NAME/downloads
-      - ${WORK_PATH}:/home/$COMPOSE_PROJECT_NAME/work
-      - ${ORG_PATH}:/home/$COMPOSE_PROJECT_NAME/org/work
-      - ${INBOX_ORG_PATH}:/home/$COMPOSE_PROJECT_NAME/org/inbox.org
-      - ./bash_history:/home/$COMPOSE_PROJECT_NAME/.bash_history
-      - openclaw_cache:/home/$COMPOSE_PROJECT_NAME/.openclaw/cache
-      - openclaw_state:/home/$COMPOSE_PROJECT_NAME/.openclaw/state
-      - user_cache:/home/$COMPOSE_PROJECT_NAME/.cache
+      - ${DOWNLOADS_PATH}:/home/$DEV_CONTAINER_NAME/downloads
+      - ${WORK_PATH}:/home/$DEV_CONTAINER_NAME/work
+      - ${ORG_PATH}:/home/$DEV_CONTAINER_NAME/org/work
+      - ${INBOX_ORG_PATH}:/home/$DEV_CONTAINER_NAME/org/inbox.org
+      - ./bash_history:/home/$DEV_CONTAINER_NAME/.bash_history
+      - openclaw_cache:/home/$DEV_CONTAINER_NAME/.openclaw/cache
+      - openclaw_state:/home/$DEV_CONTAINER_NAME/.openclaw/state
+      - opencode_data:/home/$DEV_CONTAINER_NAME/.local/share/opencode
+      - user_cache:/home/$DEV_CONTAINER_NAME/.cache
       - apt_cache:/var/cache/apt/archives
       - apt_lists:/var/lib/apt/lists
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -35,7 +36,7 @@ services:
       dockerfile: ./.devcontainer/Dockerfile
       args:
         USER_ID: $UID
-        USERNAME: $COMPOSE_PROJECT_NAME
+        USERNAME: $DEV_CONTAINER_NAME
         IMAGE: $IMAGE
         PORT: $PORT
         VSEGPT_API_KEY: $VSEGPT_API_KEY
@@ -53,7 +54,7 @@ services:
 
   docling-serve:
     image: ghcr.io/docling-project/docling-serve-cpu:latest
-    container_name: docling-serve
+    container_name: $DEV_CONTAINER_NAME-docling-serve
     restart: always
     command: >
       /bin/bash -c '
@@ -66,8 +67,6 @@ services:
       - ../:/workspace
       - ${DOWNLOADS_PATH}:/home/$COMPOSE_PROJECT_NAME/downloads
       - ${WORK_PATH}:/home/$COMPOSE_PROJECT_NAME/work
-    ports:
-      - "5002:5002"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5002/mcp"]
       interval: 30s
@@ -97,6 +96,7 @@ services:
 
       
 volumes:
+  opencode_data:
   user_cache:
   apt_cache:
   apt_lists:

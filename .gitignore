@@ -20,3 +20,4 @@ __pycache__/
 .openclaw/cache/
 .openclaw/state/
 
+/.devcontainer/show-env

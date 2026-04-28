@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 sudo chmod a+rwx ~/.cache
+sudo mkdir -p ~/.local/share/opencode && sudo chown -R $(id -u):$(id -g) ~/.local/share/opencode
 emacs --daemon
-openclaw gateway &
 export PATH="$HOME/.opencode/bin:$PATH"
-opencode web --port=9631 --hostname=0.0.0.0 &
+opencode web --port=$PORT --hostname=0.0.0.0 &

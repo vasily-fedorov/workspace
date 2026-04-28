@@ -41,6 +41,10 @@
       ]
     }
   },
+  "network": {
+    "preferIPv4": true,
+    "autoSelectFamily": true
+  },
   "session": {
     "dmScope": "per-channel-peer"
   },

@@ -2,7 +2,7 @@
 ARG IMAGE=ubuntu:latest
 FROM $IMAGE AS base
 ARG USER_ID=${UID}
-ARG USERNAME=${COMPOSE_PROJECT_NAME}
+ARG USERNAME=${DEV_CONTAINER_NAME}
 ARG PORT=8642
 ARG VSEGPT_API_KEY
 ARG VSEGPT_API
@@ -12,6 +12,7 @@ ARG MATTERMOST_ACCESS_TOKEN
 ARG MATTERMOST_TEAM_ID
 ARG MATTERMOST_TOKEN_ID
 ENV USERNAME=${USERNAME}
+ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV VSEGPT_API_KEY=${VSEGPT_API_KEY}
 ENV VSEGPT_API=${VSEGPT_API}
@@ -33,19 +34,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt update && apt -y install --no-install-recommends --no-install-suggests \
     adduser sudo curl bash less ca-certificates ssh-client git unzip pandoc \
     pipx npm nodejs file poppler-utils wget jq emacs gettext-base gpg htop \
-    language-pack-ru locales bash-completion \
+    language-pack-ru locales bash-completion make \
     && sudo locale-gen ru_RU.UTF-8 && sudo update-locale LANG=ru_RU.UTF-8
-# RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-#     --mount=type=cache,target=/root/.cache,sharing=locked \
-#     --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
-#   apt-get update && apt-get install -y software-properties-common curl gnupg \
-#  && add-apt-repository ppa:xtradeb/apps -y && apt-get update \
-#  && apt-get install -y chromium \
-#  && add-apt-repository ppa:mozillateam/ppa && apt-get install -y firefox \
-#  && add-apt-repository "deb https://repo.yandex.ru/yandex-browser/deb stable main" \
-#  && apt-get update && apt-get install yandex-browser-stable
-
 
 # If UID is 1000, rename the existing user instead of creating a new one
 RUN if [ "$USER_ID" = "1000" ]; then \
@@ -76,13 +66,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     --mount=type=cache,target=/root/.cache,sharing=locked \
     --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
-  curl -fsSL https://opencode.ai/install | bash \
-  && curl -LsSf https://astral.sh/uv/install.sh | sh \
-  && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash \
-  && export NVM_DIR="$HOME/.nvm" \
-  && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-  && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
-  && nvm install 24.9.0
+  curl -fsSL https://opencode.ai/install | bash
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -93,8 +77,12 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     --mount=type=cache,target=/root/.cache,sharing=locked \
-    --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
- curl -s https://api.github.com/repos/be5invis/Iosevka/releases/latest | grep browser_download_url | grep -i ttc | head -1 | cut -d'"' -f4 | xargs wget -O iosevka.zip && sudo unzip iosevka.zip -d /usr/share/fonts/ && fc-cache -fv
+    --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+RUN export NVM_DIR="$HOME/.nvm" \
+  && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+  && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
+  && nvm install 24.9.0
 
 RUN git clone https://github.com/mothlike/mcp_graylog.git /home/$USERNAME/.mcp_graylog
 
@@ -122,11 +110,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
  pipx run uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    --mount=type=cache,target=/root/.cache,sharing=locked \
-    --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
- curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard
+# RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+#     --mount=type=cache,target=/var/lib/apt,sharing=locked \
+#     --mount=type=cache,target=/root/.cache,sharing=locked \
+#     --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
+#  curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard
 
 # org-mcp: Install Emacs MCP server packages from MELPA
 RUN --mount=type=cache,target=/home/$USERNAME/.cache,uid=$USER_ID,gid=1000,sharing=locked \
@@ -155,10 +143,11 @@ RUN cat > /home/$USERNAME/.emacs << 'EOF'
 (load "~/.emacs.d/init-org-mcp.el")
 EOF
 
-COPY --chown=$USER_ID .devcontainer /workspace/.devcontainer
+
 
 USER root
 # features begin: run install.sh for every feature
+COPY --chown=$USER_ID .devcontainer/dood /workspace/.devcontainer/dood
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     --mount=type=cache,target=/root/.cache,sharing=locked \
@@ -176,6 +165,7 @@ RUN mkdir -p /home/$USERNAME/.config /home/$USERNAME/.openclaw /home/$USERNAME/.
     envsubst < /workspace/.config/mattermost-mcp.json.template > /home/$USERNAME/.mattermost-mcp/config.local.json && \
     cp /workspace/.config/opencode.json.template /home/$USERNAME/.opencode/opencode.json
 RUN npm config delete prefix && npm config delete globalconfig
+COPY --chown=$USER_ID .devcontainer /workspace/.devcontainer
 WORKDIR /workspace
 
 

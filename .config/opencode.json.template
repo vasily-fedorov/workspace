@@ -28,7 +28,7 @@
     },
     "mattermost": {
       "type": "local",
-      "command": ["node", "/home/{env:COMPOSE_PROJECT_NAME}/.mattermost-mcp/build/index.js"],
+      "command": ["node", "/home/{env:DEV_CONTAINER_NAME}/.mattermost-mcp/build/index.js"],
       "environment": {
         "MATTERMOST_URL": "{env:MATTERMOST_URL}",
         "MATTERMOST_ACCESS_TOKEN": "{env:MATTERMOST_ACCESS_TOKEN}",
@@ -38,7 +38,7 @@
     },
     "mcp-graylog": {
       "type": "local",
-      "command": ["sh", "-c", "cd /home/{env:COMPOSE_PROJECT_NAME}/.mcp_graylog && ./start.sh"],
+      "command": ["sh", "-c", "cd /home/{env:DEV_CONTAINER_NAME}/.mcp_graylog && ./start.sh"],
       "environment": {
         "GRAYLOG_ENDPOINT": "{env:GRAYLOG_ENDPOINT}",
         "GRAYLOG_USERNAME": "{env:GRAYLOG_USERNAME}",

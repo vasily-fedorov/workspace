@@ -1,4 +1,4 @@
-.PHONY: show-env test-mcp mcp-chrome-devtools mcp-gitlab mcp-graylog mcp-mattermost mcp-n8n mcp-atlassian mcp-pandoc mcp-bitrix24-mcp mcp-docling
+.PHONY: show-env test-mcp mcp-chrome-devtools mcp-gitlab mcp-graylog mcp-n8n mcp-atlassian mcp-pandoc mcp-bitrix24-mcp mcp-docling mcp-mattermost 
 
 all: bash-history
 
@@ -11,7 +11,7 @@ bash-history:
 constitution-md:
 	envsubst < ./.config/constitution.md.template > ./.specify/memory/constitution.md
 
-test-mcp: mcp-chrome-devtools mcp-gitlab mcp-graylog mcp-mattermost mcp-n8n mcp-atlassian mcp-pandoc mcp-bitrix24-mcp mcp-docling
+test-mcp: mcp-chrome-devtools mcp-gitlab mcp-graylog mcp-n8n mcp-atlassian mcp-pandoc mcp-bitrix24-mcp mcp-docling mcp-mattermost 
 
 mcp-chrome-devtools:
 	@echo "Testing mcp-chrome-devtools..."
