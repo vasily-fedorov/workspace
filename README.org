@@ -50,3 +50,12 @@ opencode web --port=9631 --hostname=0.0.0.0
 Новые задачи помещаются в =~/org/inbox.org=. 
 Для управления задачами используйте стандартные TODO-циклы Org-mode.
 
+* Google Sheets (Google Cloud Platform)
+1. Нужно создать service account, сделать ему key в формате json.
+2. Протестировать внутри контейнера:
+ #+begin_src bash 
+CREDENTIALS_CONFIG=$(base64 -w0 ./credentials.json) uvx mcp-google-sheets@latest
+#+end_src
+3. Вписать переменную в .env
+4. Пригласить по почте сервисный аккаунт: дать доступ к файлу или папке. Почта для mcp:
+  sheets-mcp@crypto-gradient-487614-q5.iam.gserviceaccount.com

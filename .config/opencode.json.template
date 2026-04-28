@@ -5,6 +5,14 @@
     "hostname": "0.0.0.0"
   },
   "mcp": {
+    "google-sheets": {
+      "enabled": true,
+      "type": "local",
+      "command": ["uvx","mcp-google-sheets@latest"],
+      "environment": {
+        "CREDENTIALS_CONFIG": "{env:CREDENTIALS_CONFIG}",
+      }
+    },
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",

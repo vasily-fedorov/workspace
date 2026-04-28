@@ -61,6 +61,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
  && sudo apt install -y google-chrome-stable
 
 USER $USERNAME
+ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 WORKDIR /workspace
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -154,7 +155,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/home/$USERNAME/.cache,sharing=locked \
     if [ -f /workspace/.devcontainer/dood/install.sh ]; then bash /workspace/.devcontainer/dood/install.sh; fi
 # features end
-USER $USERNAME  
+USER $USERNAME
+ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 
 
 # Copy .config templates and process them with env vars from build args
